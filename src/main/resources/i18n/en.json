@@ -1,0 +1,24 @@
+{
+  "CONSOLE": {
+    "RABBIT_MQ": "Rabbit MQ"
+  },
+  "field": {
+    "durable": "Durable",
+    "idleSince": "Idle since",
+    "content": "Content"
+  },
+  "workspace": {
+    "rabbitmq": "RabbitMQ"
+  },
+  "selection": {
+    "RabbitMQClientEntity": "RabbitMQ client"
+  },
+  "rabbitmq": {
+    "name": "RabbitMQ Client",
+    "PUBLISH_TITLE": "Publish message",
+    "setting": {
+      "label": "RabbitMQ settings",
+      "st_RabbitMQInstallSetting": "Install RabbitMQ"
+    }
+  }
+}

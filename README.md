@@ -1,1 +1,1 @@
-# addon-rabbitmq
+## RabbitMQ bundle

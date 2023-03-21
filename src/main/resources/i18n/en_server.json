@@ -1,0 +1,5 @@
+{
+  "rabbitmq": {
+    "description": "<a target=\"_blank\" href=\"http://localhost:15672\">http://localhost:15672</a>"
+  }
+}
