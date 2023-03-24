@@ -25,6 +25,10 @@
       </exclusions>
     </dependency>
   </dependencies>
+  
+  <properties>
+    <category>Storage</category>
+  </properties>
 
   <description>communication:RABBITMQ Client</description>
   <modelVersion>4.0.0</modelVersion>
