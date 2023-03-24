@@ -30,7 +30,7 @@
     <category>Storage</category>
   </properties>
 
-  <description>communication:RABBITMQ Client</description>
+  <description>RABBITMQ Client</description>
   <modelVersion>4.0.0</modelVersion>
   <name>RabbitMQ Client</name>
   <packaging>jar</packaging>
