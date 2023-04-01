@@ -1,4 +1,4 @@
-package org.touchhome.bundle.rabbitmq;
+package org.homio.bundle.rabbitmq;
 
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
@@ -7,10 +7,10 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
+import org.homio.bundle.api.util.CommonUtils;
 import org.springframework.stereotype.Component;
-import org.touchhome.bundle.api.BundleEntrypoint;
-import org.touchhome.bundle.api.EntityContext;
-import org.touchhome.bundle.api.util.TouchHomeUtils;
+import org.homio.bundle.api.BundleEntrypoint;
+import org.homio.bundle.api.EntityContext;
 
 @Log4j2
 @Component
@@ -25,7 +25,7 @@ public class RabbitMQEntrypoint implements BundleEntrypoint {
     entityContext.bgp().builder("check-rabbitmq").execute(() -> {
       Set<String> existIps = entityContext.findAll(RabbitMQClientEntity.class).stream()
           .map(RabbitMQClientEntity::getHostname).collect(Collectors.toSet());
-      TouchHomeUtils.scanForDevice(entityContext, 5672, "RABBIT_MQ", ip -> {
+      CommonUtils.scanForDevice(entityContext, 5672, "RABBIT_MQ", ip -> {
         if (existIps.contains(ip)) {
           return false;
         }

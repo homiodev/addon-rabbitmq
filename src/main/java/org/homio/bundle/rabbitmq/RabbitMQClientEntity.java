@@ -1,22 +1,22 @@
-package org.touchhome.bundle.rabbitmq;
+package org.homio.bundle.rabbitmq;
 
 import javax.persistence.Entity;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.experimental.Accessors;
-import org.touchhome.bundle.api.EntityContext;
-import org.touchhome.bundle.api.entity.types.StorageEntity;
-import org.touchhome.bundle.api.model.ActionResponseModel;
-import org.touchhome.bundle.api.service.EntityService;
-import org.touchhome.bundle.api.ui.UISidebarChildren;
-import org.touchhome.bundle.api.ui.field.UIField;
-import org.touchhome.bundle.api.ui.field.UIFieldPort;
-import org.touchhome.bundle.api.ui.field.UIFieldType;
-import org.touchhome.bundle.api.ui.field.action.UIContextMenuAction;
-import org.touchhome.bundle.api.util.SecureString;
-import org.touchhome.bundle.rabbitmq.workspace.Scratch3RabbitMQBlocks;
-import org.touchhome.bundle.api.util.Lang;
+import org.homio.bundle.api.EntityContext;
+import org.homio.bundle.api.entity.types.StorageEntity;
+import org.homio.bundle.api.model.ActionResponseModel;
+import org.homio.bundle.api.service.EntityService;
+import org.homio.bundle.api.ui.UISidebarChildren;
+import org.homio.bundle.api.ui.field.UIField;
+import org.homio.bundle.api.ui.field.UIFieldPort;
+import org.homio.bundle.api.ui.field.UIFieldType;
+import org.homio.bundle.api.ui.field.action.UIContextMenuAction;
+import org.homio.bundle.api.util.SecureString;
+import org.homio.bundle.rabbitmq.workspace.Scratch3RabbitMQBlocks;
+import org.homio.bundle.api.util.Lang;
 
 @Getter
 @Setter

@@ -1,18 +1,18 @@
-package org.touchhome.bundle.rabbitmq;
+package org.homio.bundle.rabbitmq;
 
 import java.nio.file.Path;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.SystemUtils;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
-import org.touchhome.bundle.api.EntityContext;
-import org.touchhome.bundle.api.entity.dependency.DependencyExecutableInstaller;
-import org.touchhome.bundle.api.setting.SettingPluginButton;
-import org.touchhome.bundle.api.setting.SettingPluginText;
-import org.touchhome.bundle.hquery.hardware.other.MachineHardwareRepository;
-import org.touchhome.bundle.rabbitmq.setting.RabbitMQInstallSetting;
-import org.touchhome.bundle.rabbitmq.setting.RabbitMQPathSetting;
-import org.touchhome.bundle.api.ui.field.ProgressBar;
+import org.homio.bundle.api.EntityContext;
+import org.homio.bundle.api.entity.dependency.DependencyExecutableInstaller;
+import org.homio.bundle.api.setting.SettingPluginButton;
+import org.homio.bundle.api.setting.SettingPluginText;
+import org.homio.bundle.hquery.hardware.other.MachineHardwareRepository;
+import org.homio.bundle.rabbitmq.setting.RabbitMQInstallSetting;
+import org.homio.bundle.rabbitmq.setting.RabbitMQPathSetting;
+import org.homio.bundle.api.ui.field.ProgressBar;
 
 @Log4j2
 @Component

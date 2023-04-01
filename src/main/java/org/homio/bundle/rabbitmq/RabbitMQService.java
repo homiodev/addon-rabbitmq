@@ -1,4 +1,4 @@
-package org.touchhome.bundle.rabbitmq;
+package org.homio.bundle.rabbitmq;
 
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
@@ -9,9 +9,9 @@ import java.util.Objects;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.Nullable;
-import org.touchhome.bundle.api.EntityContext;
-import org.touchhome.bundle.api.service.EntityService;
-import org.touchhome.bundle.rabbitmq.header.RabbitMqPublishMessageConsolePlugin;
+import org.homio.bundle.api.EntityContext;
+import org.homio.bundle.api.service.EntityService;
+import org.homio.bundle.rabbitmq.header.RabbitMqPublishMessageConsolePlugin;
 
 public class RabbitMQService implements EntityService.ServiceInstance<RabbitMQClientEntity> {
 

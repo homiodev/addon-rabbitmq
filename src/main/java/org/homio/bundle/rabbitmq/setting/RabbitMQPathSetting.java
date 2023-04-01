@@ -1,7 +1,7 @@
-package org.touchhome.bundle.rabbitmq.setting;
+package org.homio.bundle.rabbitmq.setting;
 
-import org.touchhome.bundle.api.EntityContext;
-import org.touchhome.bundle.api.setting.SettingPluginText;
+import org.homio.bundle.api.EntityContext;
+import org.homio.bundle.api.setting.SettingPluginText;
 
 public class RabbitMQPathSetting implements SettingPluginText {
 

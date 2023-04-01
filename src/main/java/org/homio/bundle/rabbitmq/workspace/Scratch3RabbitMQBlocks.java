@@ -1,4 +1,4 @@
-package org.touchhome.bundle.rabbitmq.workspace;
+package org.homio.bundle.rabbitmq.workspace;
 
 import com.rabbitmq.client.AMQP.BasicProperties;
 import com.rabbitmq.client.BuiltinExchangeType;
@@ -11,18 +11,18 @@ import java.util.regex.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
+import org.homio.bundle.rabbitmq.RabbitMQClientEntity;
+import org.homio.bundle.rabbitmq.RabbitMQEntrypoint;
+import org.homio.bundle.rabbitmq.RabbitMQService;
 import org.springframework.stereotype.Component;
-import org.touchhome.bundle.api.EntityContext;
-import org.touchhome.bundle.api.state.DecimalType;
-import org.touchhome.bundle.api.state.State;
-import org.touchhome.bundle.api.workspace.BroadcastLock;
-import org.touchhome.bundle.api.workspace.WorkspaceBlock;
-import org.touchhome.bundle.api.workspace.scratch.MenuBlock;
-import org.touchhome.bundle.api.workspace.scratch.Scratch3Block;
-import org.touchhome.bundle.api.workspace.scratch.Scratch3ExtensionBlocks;
-import org.touchhome.bundle.rabbitmq.RabbitMQClientEntity;
-import org.touchhome.bundle.rabbitmq.RabbitMQEntrypoint;
-import org.touchhome.bundle.rabbitmq.RabbitMQService;
+import org.homio.bundle.api.EntityContext;
+import org.homio.bundle.api.state.DecimalType;
+import org.homio.bundle.api.state.State;
+import org.homio.bundle.api.workspace.BroadcastLock;
+import org.homio.bundle.api.workspace.WorkspaceBlock;
+import org.homio.bundle.api.workspace.scratch.MenuBlock;
+import org.homio.bundle.api.workspace.scratch.Scratch3Block;
+import org.homio.bundle.api.workspace.scratch.Scratch3ExtensionBlocks;
 
 @Getter
 @Component

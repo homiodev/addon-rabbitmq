@@ -1,4 +1,4 @@
-package org.touchhome.bundle.rabbitmq;
+package org.homio.bundle.rabbitmq;
 
 import com.rabbitmq.http.client.Client;
 import com.rabbitmq.http.client.domain.BindingInfo;
@@ -18,14 +18,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
-import org.touchhome.bundle.api.EntityContext;
-import org.touchhome.bundle.api.console.ConsolePluginTable;
-import org.touchhome.bundle.api.model.HasEntityIdentifier;
-import org.touchhome.bundle.api.setting.console.header.ConsoleHeaderSettingPlugin;
-import org.touchhome.bundle.api.ui.field.UIField;
-import org.touchhome.bundle.api.ui.field.UIFieldType;
-import org.touchhome.bundle.rabbitmq.RabbitMQConsolePlugin.RabbitMQPluginModel;
-import org.touchhome.bundle.rabbitmq.header.RabbitMqPublishMessageConsolePlugin;
+import org.homio.bundle.api.EntityContext;
+import org.homio.bundle.api.console.ConsolePluginTable;
+import org.homio.bundle.api.model.HasEntityIdentifier;
+import org.homio.bundle.api.setting.console.header.ConsoleHeaderSettingPlugin;
+import org.homio.bundle.api.ui.field.UIField;
+import org.homio.bundle.api.ui.field.UIFieldType;
+import org.homio.bundle.rabbitmq.RabbitMQConsolePlugin.RabbitMQPluginModel;
+import org.homio.bundle.rabbitmq.header.RabbitMqPublishMessageConsolePlugin;
 
 @RequiredArgsConstructor
 public class RabbitMQConsolePlugin implements ConsolePluginTable<RabbitMQPluginModel> {

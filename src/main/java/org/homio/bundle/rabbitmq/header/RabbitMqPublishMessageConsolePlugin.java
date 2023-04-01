@@ -1,12 +1,12 @@
-package org.touchhome.bundle.rabbitmq.header;
+package org.homio.bundle.rabbitmq.header;
 
 import java.util.Arrays;
 import java.util.List;
 import org.json.JSONObject;
-import org.touchhome.bundle.api.EntityContext;
-import org.touchhome.bundle.api.setting.SettingPluginButton;
-import org.touchhome.bundle.api.setting.console.header.ConsoleHeaderSettingPlugin;
-import org.touchhome.bundle.api.ui.field.action.ActionInputParameter;
+import org.homio.bundle.api.EntityContext;
+import org.homio.bundle.api.setting.SettingPluginButton;
+import org.homio.bundle.api.setting.console.header.ConsoleHeaderSettingPlugin;
+import org.homio.bundle.api.ui.field.action.ActionInputParameter;
 
 public class RabbitMqPublishMessageConsolePlugin implements ConsoleHeaderSettingPlugin<JSONObject>, SettingPluginButton {
 

@@ -1,7 +1,7 @@
-package org.touchhome.bundle.rabbitmq;
+package org.homio.bundle.rabbitmq;
 
 import org.springframework.context.annotation.Configuration;
-import org.touchhome.bundle.api.BundleConfiguration;
+import org.homio.bundle.api.BundleConfiguration;
 
 @Configuration
 @BundleConfiguration

@@ -1,9 +1,9 @@
-package org.touchhome.bundle.rabbitmq.setting;
+package org.homio.bundle.rabbitmq.setting;
 
 import org.apache.commons.lang3.SystemUtils;
-import org.touchhome.bundle.api.EntityContext;
-import org.touchhome.bundle.api.setting.SettingPluginButton;
-import org.touchhome.bundle.rabbitmq.RabbitMQDependencyExecutableInstaller;
+import org.homio.bundle.rabbitmq.RabbitMQDependencyExecutableInstaller;
+import org.homio.bundle.api.EntityContext;
+import org.homio.bundle.api.setting.SettingPluginButton;
 
 public class RabbitMQInstallSetting implements SettingPluginButton {
 
