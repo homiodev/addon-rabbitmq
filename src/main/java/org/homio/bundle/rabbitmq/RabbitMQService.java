@@ -1,27 +1,33 @@
 package org.homio.bundle.rabbitmq;
 
+import static org.apache.commons.lang3.StringUtils.defaultIfEmpty;
+
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.http.client.Client;
 import com.rabbitmq.http.client.ClientParameters;
-import java.util.Objects;
 import lombok.Getter;
 import lombok.SneakyThrows;
-import org.jetbrains.annotations.Nullable;
 import org.homio.bundle.api.EntityContext;
 import org.homio.bundle.api.service.EntityService;
+import org.homio.bundle.api.ui.UI.Color;
 import org.homio.bundle.rabbitmq.header.RabbitMqPublishMessageConsolePlugin;
+import org.homio.bundle.rabbitmq.workspace.Scratch3RabbitMQBlocks;
+import org.jetbrains.annotations.Nullable;
 
 public class RabbitMQService implements EntityService.ServiceInstance<RabbitMQClientEntity> {
 
   private @Nullable Channel channel;
+  private final EntityContext entityContext;
   @Getter
   private RabbitMQClientEntity entity;
   private Client apiClient;
   private Connection connection;
+  private long hashCode;
 
   public RabbitMQService(EntityContext entityContext, RabbitMQClientEntity entity) {
+    this.entityContext = entityContext;
     this.entity = entity;
     RabbitMQConsolePlugin rmqPlugin = new RabbitMQConsolePlugin(entityContext, this);
     entityContext.ui().registerConsolePlugin(entity.getEntityID(), rmqPlugin);
@@ -67,17 +73,29 @@ public class RabbitMQService implements EntityService.ServiceInstance<RabbitMQCl
   @Override
   @SneakyThrows
   public boolean entityUpdated(RabbitMQClientEntity entity) {
-    boolean updated = false;
-    if (!Objects.equals(this.entity.getHostname(), entity.getHostname()) ||
-        !Objects.equals(this.entity.getApiPort(), entity.getApiPort()) ||
-        !Objects.equals(this.entity.getPort(), entity.getPort()) ||
-        !Objects.equals(this.entity.getUser(), entity.getUser()) ||
-        !Objects.equals(this.entity.getPassword().asString(), entity.getPassword().asString())) {
-      this.destroy();
-      updated = true;
-    }
+    long hashCode = entity.getJsonDataHashCode("host", "apiPort", "port", "user", "pwd");
+    boolean reconfigure = this.hashCode != hashCode;
+    this.hashCode = hashCode;
     this.entity = entity;
-    return updated;
+    if (reconfigure) {
+      this.destroy();
+    }
+    updateNotificationBlock();
+    return reconfigure;
+  }
+
+  private void updateNotificationBlock() {
+    entityContext.ui().addNotificationBlock("rabbitmq", "RabbitMQ", "fas fa-envelope-square",
+        Scratch3RabbitMQBlocks.COLOR, builder -> {
+          builder.setStatus(getEntity().getStatus());
+          if (!getEntity().getStatus().isOnline()) {
+            builder.addInfo(defaultIfEmpty(getEntity().getStatusMessage(), "Unknown error"),
+                Color.RED, "fas fa-exclamation", null);
+          } else {
+            String version = entityContext.hardware().execute("rabbitmqctl version");
+            builder.setVersion(version);
+          }
+        });
   }
 
   @Override

@@ -1,22 +1,26 @@
 package org.homio.bundle.rabbitmq;
 
+import com.pivovarit.function.ThrowingConsumer;
 import javax.persistence.Entity;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.experimental.Accessors;
+import org.apache.commons.lang3.SystemUtils;
 import org.homio.bundle.api.EntityContext;
+import org.homio.bundle.api.EntityContextHardware;
 import org.homio.bundle.api.entity.types.StorageEntity;
 import org.homio.bundle.api.model.ActionResponseModel;
 import org.homio.bundle.api.service.EntityService;
 import org.homio.bundle.api.ui.UISidebarChildren;
+import org.homio.bundle.api.ui.field.ProgressBar;
 import org.homio.bundle.api.ui.field.UIField;
 import org.homio.bundle.api.ui.field.UIFieldPort;
 import org.homio.bundle.api.ui.field.UIFieldType;
 import org.homio.bundle.api.ui.field.action.UIContextMenuAction;
+import org.homio.bundle.api.util.Lang;
 import org.homio.bundle.api.util.SecureString;
 import org.homio.bundle.rabbitmq.workspace.Scratch3RabbitMQBlocks;
-import org.homio.bundle.api.util.Lang;
 
 @Getter
 @Setter
@@ -77,7 +81,7 @@ public class RabbitMQClientEntity extends StorageEntity<RabbitMQClientEntity> im
   }
 
   public void setPassword(String value) {
-    setJsonData("pwd", value);
+    setJsonDataSecure("pwd", value);
   }
 
   @UIField(order = 70)
@@ -105,5 +109,29 @@ public class RabbitMQClientEntity extends StorageEntity<RabbitMQClientEntity> im
   @SneakyThrows
   public RabbitMQService createService(EntityContext entityContext) {
     return new RabbitMQService(entityContext, this);
+  }
+
+  @UIContextMenuAction(value = "install_rabbitmq", icon = "fas fa-play")
+  public ActionResponseModel install(EntityContext entityContext) {
+    if (SystemUtils.IS_OS_LINUX) {
+      EntityContextHardware hardware = entityContext.hardware();
+      if (!hardware.isSoftwareInstalled("rabbitmq-server")) {
+        entityContext.bgp().runWithProgress("install-rabbitmq-server", false, progressBar -> {
+          hardware.installSoftware("rabbitmq-server", 300, progressBar);
+          hardware.enableAndStartSystemCtl("rabbitmq-server");
+        }, exception -> {
+          if (exception != null) {
+            entityContext.ui().sendErrorMessage("Error during install RabbitMQ", exception);
+          } else {
+            entityContext.ui().sendSuccessMessage("RabbitMQ installed successfully");
+          }
+        });
+        return ActionResponseModel.showInfo("Installing RabbitMQ...");
+      } else {
+        return ActionResponseModel.showError("RabbitMQ already installed");
+      }
+    } else {
+      return ActionResponseModel.showError("Unable to install RabbitMQ for non-linux env");
+    }
   }
 }

@@ -1,4 +1,5 @@
 {
+  "install_rabbitmq": "Install RabbitMQ",
   "CONSOLE": {
     "RABBIT_MQ": "Rabbit MQ"
   },
@@ -16,9 +17,5 @@
   "rabbitmq": {
     "name": "RabbitMQ Client",
     "PUBLISH_TITLE": "Publish message",
-    "setting": {
-      "label": "RabbitMQ settings",
-      "st_RabbitMQInstallSetting": "Install RabbitMQ"
-    }
   }
 }
