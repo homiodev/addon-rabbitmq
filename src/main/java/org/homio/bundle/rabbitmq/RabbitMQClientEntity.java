@@ -1,45 +1,42 @@
 package org.homio.bundle.rabbitmq;
 
-import com.pivovarit.function.ThrowingConsumer;
-import javax.persistence.Entity;
+import jakarta.persistence.Entity;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.experimental.Accessors;
 import org.apache.commons.lang3.SystemUtils;
-import org.homio.bundle.api.EntityContext;
-import org.homio.bundle.api.EntityContextHardware;
-import org.homio.bundle.api.entity.types.StorageEntity;
-import org.homio.bundle.api.model.ActionResponseModel;
-import org.homio.bundle.api.service.EntityService;
-import org.homio.bundle.api.ui.UISidebarChildren;
-import org.homio.bundle.api.ui.field.ProgressBar;
-import org.homio.bundle.api.ui.field.UIField;
-import org.homio.bundle.api.ui.field.UIFieldPort;
-import org.homio.bundle.api.ui.field.UIFieldType;
-import org.homio.bundle.api.ui.field.action.UIContextMenuAction;
-import org.homio.bundle.api.util.Lang;
-import org.homio.bundle.api.util.SecureString;
+import org.homio.api.Context;
+import org.homio.api.entity.types.StorageEntity;
+import org.homio.api.model.ActionResponseModel;
+import org.homio.api.service.EntityService;
+import org.homio.api.ui.UISidebarChildren;
+import org.homio.api.ui.field.UIField;
+import org.homio.api.ui.field.UIFieldPort;
+import org.homio.api.ui.field.UIFieldType;
+import org.homio.api.ui.field.action.UIContextMenuAction;
+import org.homio.api.util.Lang;
+import org.homio.api.util.SecureString;
 import org.homio.bundle.rabbitmq.workspace.Scratch3RabbitMQBlocks;
+import org.jetbrains.annotations.NotNull;
 
+@SuppressWarnings({"JpaAttributeMemberSignatureInspection", "JpaAttributeTypeInspection", "unused"})
 @Getter
 @Setter
 @Entity
 @Accessors(chain = true)
 @UISidebarChildren(icon = "fas fa-envelope-square", color = Scratch3RabbitMQBlocks.COLOR)
-public class RabbitMQClientEntity extends StorageEntity<RabbitMQClientEntity> implements
-    EntityService<RabbitMQService, RabbitMQClientEntity> {
-
-  public static final String PREFIX = "rmq_";
-
-  @Override
-  public String getEntityPrefix() {
-    return PREFIX;
-  }
+public class RabbitMQClientEntity extends StorageEntity implements
+  EntityService<RabbitMQService> {
 
   @UIField(order = 1, hideInEdit = true, hideOnEmpty = true, fullWidth = true, bg = "#334842", type = UIFieldType.HTML)
   public final String getDescription() {
     return Lang.getServerMessage("rabbitmq.description");
+  }
+
+  @Override
+  protected @NotNull String getDevicePrefix() {
+    return "rmq";
   }
 
   @UIField(order = 30)
@@ -95,36 +92,35 @@ public class RabbitMQClientEntity extends StorageEntity<RabbitMQClientEntity> im
   }
 
   @UIContextMenuAction(value = "CHECK_DB_CONNECTION", icon = "fas fa-plug")
-  public ActionResponseModel testConnection() throws Exception {
+  public ActionResponseModel testConnection() {
     getService().testServiceWithSetStatus();
     return ActionResponseModel.success();
   }
 
   @Override
-  public Class<RabbitMQService> getEntityServiceItemClass() {
+  public long getEntityServiceHashCode() {
+    return getJsonDataHashCode("used", "pwd", "port", "host");
+  }
+
+  @Override
+  public @NotNull Class<RabbitMQService> getEntityServiceItemClass() {
     return RabbitMQService.class;
   }
 
   @Override
   @SneakyThrows
-  public RabbitMQService createService(EntityContext entityContext) {
-    return new RabbitMQService(entityContext, this);
+  public RabbitMQService createService(@NotNull Context context) {
+    return new RabbitMQService(context, this);
   }
 
   @UIContextMenuAction(value = "install_rabbitmq", icon = "fas fa-play")
-  public ActionResponseModel install(EntityContext entityContext) {
+  public ActionResponseModel install(Context context) {
     if (SystemUtils.IS_OS_LINUX) {
-      EntityContextHardware hardware = entityContext.hardware();
+      var hardware = context.hardware();
       if (!hardware.isSoftwareInstalled("rabbitmq-server")) {
-        entityContext.bgp().runWithProgress("install-rabbitmq-server", false, progressBar -> {
+        context.bgp().runWithProgress("install-rabbitmq-server").execute(progressBar -> {
           hardware.installSoftware("rabbitmq-server", 300, progressBar);
           hardware.enableAndStartSystemCtl("rabbitmq-server");
-        }, exception -> {
-          if (exception != null) {
-            entityContext.ui().sendErrorMessage("Error during install RabbitMQ", exception);
-          } else {
-            entityContext.ui().sendSuccessMessage("RabbitMQ installed successfully");
-          }
         });
         return ActionResponseModel.showInfo("Installing RabbitMQ...");
       } else {

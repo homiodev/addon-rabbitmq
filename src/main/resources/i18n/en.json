@@ -16,6 +16,6 @@
   },
   "rabbitmq": {
     "name": "RabbitMQ Client",
-    "PUBLISH_TITLE": "Publish message",
+    "PUBLISH_TITLE": "Publish message"
   }
 }

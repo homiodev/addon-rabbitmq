@@ -1,10 +1,7 @@
 package org.homio.bundle.rabbitmq;
 
-import org.springframework.context.annotation.Configuration;
-import org.homio.bundle.api.BundleConfiguration;
-
-@Configuration
-@BundleConfiguration
+//@Configuration
+// @BundleConfiguration
 public class RabbitMQConfiguration {
 
     /*@Bean

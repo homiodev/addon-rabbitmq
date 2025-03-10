@@ -2,30 +2,33 @@ package org.homio.bundle.rabbitmq;
 
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
-import java.util.Set;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
-import org.homio.bundle.api.util.CommonUtils;
+import org.homio.api.AddonConfiguration;
+import org.homio.api.AddonEntrypoint;
+import org.homio.api.Context;
+import org.homio.api.util.HardwareUtils;
 import org.springframework.stereotype.Component;
-import org.homio.bundle.api.BundleEntrypoint;
-import org.homio.bundle.api.EntityContext;
+
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Log4j2
 @Component
+@AddonConfiguration
 @RequiredArgsConstructor
-public class RabbitMQEntrypoint implements BundleEntrypoint {
+public class RabbitMQEntrypoint implements AddonEntrypoint {
 
-  private final EntityContext entityContext;
+  private final Context context;
 
   @SneakyThrows
   public void init() {
-    entityContext.ui().registerConsolePluginName("RABBIT_MQ");
-    entityContext.bgp().builder("check-rabbitmq").execute(() -> {
-      Set<String> existIps = entityContext.findAll(RabbitMQClientEntity.class).stream()
-          .map(RabbitMQClientEntity::getHostname).collect(Collectors.toSet());
-      CommonUtils.scanForDevice(entityContext, 5672, "RABBIT_MQ", ip -> {
+    context.ui().console().registerPluginName("RABBIT_MQ");
+    context.bgp().builder("check-rabbitmq").execute(() -> {
+      Set<String> existIps = context.db().findAll(RabbitMQClientEntity.class).stream()
+        .map(RabbitMQClientEntity::getHostname).collect(Collectors.toSet());
+      HardwareUtils.scanForDevice(context, 5672, "RABBIT_MQ", ip -> {
         if (existIps.contains(ip)) {
           return false;
         }
@@ -42,23 +45,13 @@ public class RabbitMQEntrypoint implements BundleEntrypoint {
       }, ip -> {
         RabbitMQClientEntity entity = new RabbitMQClientEntity();
         entity.setHostname(ip);
-        entityContext.save(entity);
+        context.db().save(entity);
       });
     });
   }
 
   @Override
-  @SneakyThrows
   public void destroy() {
-  }
-
-  @Override
-  public String getBundleId() {
-    return "rabbitmq";
-  }
-
-  @Override
-  public int order() {
-    return 2000;
+    context.ui().console().unRegisterPlugin("RABBIT_MQ");
   }
 }

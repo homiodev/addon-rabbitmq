@@ -1,57 +1,53 @@
 package org.homio.bundle.rabbitmq;
 
-import static org.apache.commons.lang3.StringUtils.defaultIfEmpty;
-
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.http.client.Client;
 import com.rabbitmq.http.client.ClientParameters;
-import lombok.Getter;
 import lombok.SneakyThrows;
-import org.homio.bundle.api.EntityContext;
-import org.homio.bundle.api.service.EntityService;
-import org.homio.bundle.api.ui.UI.Color;
+import org.homio.api.Context;
+import org.homio.api.model.Icon;
+import org.homio.api.service.EntityService;
 import org.homio.bundle.rabbitmq.header.RabbitMqPublishMessageConsolePlugin;
 import org.homio.bundle.rabbitmq.workspace.Scratch3RabbitMQBlocks;
 import org.jetbrains.annotations.Nullable;
 
-public class RabbitMQService implements EntityService.ServiceInstance<RabbitMQClientEntity> {
+import static org.apache.commons.lang3.StringUtils.defaultIfEmpty;
+import static org.homio.api.ui.UI.Color.RED;
+
+public class RabbitMQService extends EntityService.ServiceInstance<RabbitMQClientEntity> {
 
   private @Nullable Channel channel;
-  private final EntityContext entityContext;
-  @Getter
-  private RabbitMQClientEntity entity;
   private Client apiClient;
   private Connection connection;
   private long hashCode;
 
-  public RabbitMQService(EntityContext entityContext, RabbitMQClientEntity entity) {
-    this.entityContext = entityContext;
-    this.entity = entity;
+  public RabbitMQService(Context entityContext, RabbitMQClientEntity entity) {
+    super(entityContext, entity, true, "RabbitMQ");
     RabbitMQConsolePlugin rmqPlugin = new RabbitMQConsolePlugin(entityContext, this);
-    entityContext.ui().registerConsolePlugin(entity.getEntityID(), rmqPlugin);
+    entityContext.ui().console().registerPlugin(entity.getEntityID(), rmqPlugin);
 
     entityContext.setting().listenValue(RabbitMqPublishMessageConsolePlugin.class, entity.getEntityID() + "-publish",
-        json -> {
-          if (json != null) {
-              getChannel().basicPublish(
-                  json.getString("exchange"),
-                  json.getString("routing_key"),
-                  null,
-                  json.getString("payload").getBytes());
-          }
-        });
+      json -> {
+        if (json != null) {
+          getChannel().basicPublish(
+            json.getString("exchange"),
+            json.getString("routing_key"),
+            null,
+            json.getString("payload").getBytes());
+        }
+      });
   }
 
   @SneakyThrows
   public Client getApiClient() {
     if (this.apiClient == null) {
       this.apiClient = new Client(
-          new ClientParameters()
-              .url(String.format("http://%s:%d/api/", entity.getHostname(), entity.getApiPort()))
-              .username(entity.getUser())
-              .password(entity.getPassword().asString()));
+        new ClientParameters()
+          .url(String.format("http://%s:%d/api/", entity.getHostname(), entity.getApiPort()))
+          .username(entity.getUser())
+          .password(entity.getPassword().asString()));
     }
     return this.apiClient;
   }
@@ -72,34 +68,34 @@ public class RabbitMQService implements EntityService.ServiceInstance<RabbitMQCl
 
   @Override
   @SneakyThrows
-  public boolean entityUpdated(RabbitMQClientEntity entity) {
+  public void entityUpdated(RabbitMQClientEntity entity) {
     long hashCode = entity.getJsonDataHashCode("host", "apiPort", "port", "user", "pwd");
     boolean reconfigure = this.hashCode != hashCode;
     this.hashCode = hashCode;
     this.entity = entity;
     if (reconfigure) {
-      this.destroy();
+      this.destroy(true, null);
     }
+    initialize();
     updateNotificationBlock();
-    return reconfigure;
   }
 
-  private void updateNotificationBlock() {
-    entityContext.ui().addNotificationBlock("rabbitmq", "RabbitMQ", "fas fa-envelope-square",
-        Scratch3RabbitMQBlocks.COLOR, builder -> {
-          builder.setStatus(getEntity().getStatus());
-          if (!getEntity().getStatus().isOnline()) {
-            builder.addInfo(defaultIfEmpty(getEntity().getStatusMessage(), "Unknown error"),
-                Color.RED, "fas fa-exclamation", null);
-          } else {
-            String version = entityContext.hardware().execute("rabbitmqctl version");
-            builder.setVersion(version);
-          }
-        });
+  public void updateNotificationBlock() {
+    var icon = new Icon("fas fa-envelope-square", Scratch3RabbitMQBlocks.COLOR);
+    context.ui().notification().addBlock("rabbitmq", "RabbitMQ", icon, builder -> {
+      builder.setStatus(getEntity().getStatus());
+      if (!getEntity().getStatus().isOnline()) {
+        var info = defaultIfEmpty(getEntity().getStatusMessage(), "Unknown error");
+        builder.addInfo(String.valueOf(info.hashCode()), new Icon("fas fa-exclamation", RED), info);
+      } else {
+        String version = context.hardware().execute("rabbitmqctl version");
+        builder.setVersion(version);
+      }
+    });
   }
 
   @Override
-  public void destroy() throws Exception {
+  public void destroy(boolean forRestart, @Nullable Exception ex) throws Exception {
     if (channel != null && channel.isOpen()) {
       channel.close();
       connection.close();
@@ -107,8 +103,12 @@ public class RabbitMQService implements EntityService.ServiceInstance<RabbitMQCl
   }
 
   @Override
-  public boolean testService() {
+  public void testService() {
     getChannel();
-    return true;
+  }
+
+  @Override
+  protected void initialize() {
+    getChannel();
   }
 }
