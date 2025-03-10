@@ -99,7 +99,7 @@ public class RabbitMQClientEntity extends StorageEntity implements
 
   @Override
   public long getEntityServiceHashCode() {
-    return getJsonDataHashCode("used", "pwd", "port", "host");
+    return getJsonDataHashCode("used", "pwd", "port", "host", "apiPort");
   }
 
   @Override

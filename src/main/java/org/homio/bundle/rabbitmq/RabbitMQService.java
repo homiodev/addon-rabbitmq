@@ -66,20 +66,6 @@ public class RabbitMQService extends EntityService.ServiceInstance<RabbitMQClien
     return this.channel;
   }
 
-  @Override
-  @SneakyThrows
-  public void entityUpdated(RabbitMQClientEntity entity) {
-    long hashCode = entity.getJsonDataHashCode("host", "apiPort", "port", "user", "pwd");
-    boolean reconfigure = this.hashCode != hashCode;
-    this.hashCode = hashCode;
-    this.entity = entity;
-    if (reconfigure) {
-      this.destroy(true, null);
-    }
-    initialize();
-    updateNotificationBlock();
-  }
-
   public void updateNotificationBlock() {
     var icon = new Icon("fas fa-envelope-square", Scratch3RabbitMQBlocks.COLOR);
     context.ui().notification().addBlock("rabbitmq", "RabbitMQ", icon, builder -> {
